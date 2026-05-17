@@ -42,25 +42,25 @@ class AuthController extends Controller
     // Proses login
     public function login(Request $request)
     {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
+    $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required',
+    ]);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $request->session()->regenerate();
-            return redirect()->route('chat.index');
-        }
+    if (Auth::attempt(['email' => $request->email, 'password' => $request->password], true)) {
+        $request->session()->regenerate();
+        return redirect()->route('chat.index');
+    }
 
-        return back()->withErrors(['email' => 'Email atau password salah.']);
+    return back()->withErrors(['email' => 'Email atau password salah.']);
     }
 
     // Logout
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('login');
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect('/login');
     }
 }
