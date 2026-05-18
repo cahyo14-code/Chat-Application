@@ -219,7 +219,7 @@
         font-size: 12px;
         border-radius: 4px;
     }
-</style>
+    </style>
 </head>
 <body>
 
@@ -356,10 +356,17 @@
     }
 
     window.addEventListener('load', function() {
-        if (conversationId && window.Echo) {
-            window.Echo.join('conversation.' + conversationId)
+        if (!window.Echo) return;
+
+        setTimeout(function() {
+
+            // Online/Offline tracking + group created listener
+            window.Echo.join('online')
                 .here(function(users) {
-                    console.log('Online:', users);
+                    users.forEach(function(user) {
+                        var dot = document.getElementById('dot-' + user.id);
+                        if (dot) dot.classList.add('online');
+                    });
                 })
                 .joining(function(user) {
                     var dot = document.getElementById('dot-' + user.id);
@@ -369,12 +376,21 @@
                     var dot = document.getElementById('dot-' + user.id);
                     if (dot) dot.classList.remove('online');
                 })
-                .listen('.message.sent', function(e) {
-                    if (e.user_id !== authUserId) {
-                        appendMessage(e.body, e.user_name, e.created_at, false);
-                    }
+                .listen('.group.created', function(e) {
+                    window.location.reload();
                 });
-        }
+
+            // Real-time pesan
+            if (conversationId) {
+                window.Echo.join('conversation.' + conversationId)
+                    .listen('.message.sent', function(e) {
+                        if (e.user_id !== authUserId) {
+                            appendMessage(e.body, e.user_name, e.created_at, false);
+                        }
+                    });
+            }
+
+        }, 1000);
     });
 </script>
 </body>

@@ -90,21 +90,22 @@ class ChatController extends Controller
 
     // Buat group chat
     public function createGroup(Request $request)
-    {
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'user_ids' => 'required|array|min:1',
-        ]);
+{
+    $request->validate([
+        'name'     => 'required|string|max:255',
+        'user_ids' => 'required|array|min:1',
+    ]);
 
-        $conversation = Conversation::create([
-            'name' => $request->name,
-            'type' => 'group',
-        ]);
+    $conversation = Conversation::create([
+        'name' => $request->name,
+        'type' => 'group',
+    ]);
 
-        // Tambah anggota group + diri sendiri
-        $members = array_merge($request->user_ids, [Auth::id()]);
-        $conversation->users()->attach($members);
+    $members = array_merge($request->user_ids, [Auth::id()]);
+    $conversation->users()->attach($members);
 
-        return redirect()->route('chat.show', $conversation->id);
-    }
+    broadcast(new \App\Events\GroupCreated($conversation));
+
+    return redirect()->route('chat.show', $conversation->id);
+}
 }
