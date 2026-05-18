@@ -21,7 +21,7 @@ class GroupCreated implements ShouldBroadcast
      */
     public Conversation $conversation;
 
-    public function __construct()
+    public function __construct(Conversation $conversation)
     {
         $this->conversation = $conversation;
     }

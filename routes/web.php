@@ -19,8 +19,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Chat Routes (hanya bisa diakses kalau sudah login)
 Route::middleware('auth')->group(function () {
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
-    Route::get('/chat/{conversation}', [ChatController::class, 'show'])->name('chat.show');
-    Route::post('/chat/{conversation}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
     Route::get('/chat/private/{user}', [ChatController::class, 'openPrivate'])->name('chat.private');
     Route::post('/chat/group/create', [ChatController::class, 'createGroup'])->name('chat.group.create');
+    Route::get('/chat/{conversation}', [ChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/{conversation}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
 });

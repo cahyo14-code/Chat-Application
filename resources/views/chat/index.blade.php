@@ -224,7 +224,7 @@
 <body>
 
 <div class="navbar">
-    <b>💬 Chat App</b>
+    <b>Chat Application</b>
     <span style="font-size:13px">{{ Auth::user()->name }} &nbsp;
         <form class="inline" method="POST" action="{{ route('logout') }}">
             @csrf <button class="logout">Keluar</button>
@@ -242,7 +242,6 @@
             </a>
         @endforeach
 
-        @if($conversations->count())
             <div class="section" style="display:flex;justify-content:space-between;align-items:center">
                 PERCAKAPAN
                 <span onclick="document.getElementById('groupModal').classList.add('show')" style="cursor:pointer;font-size:12px;color:#555">+ Grup</span>
@@ -252,7 +251,6 @@
                     {{ $conv->type == 'group' ? '# '.$conv->name : $conv->users->where('id','!=',Auth::id())->first()->name ?? 'Unknown' }}
                 </a>
             @endforeach
-        @endif
     </div>
 
     <div class="chat-area">
