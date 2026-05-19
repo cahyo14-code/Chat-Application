@@ -376,7 +376,38 @@
                 })
                 .listen('.group.created', function(e) {
                     window.location.reload();
-                });
+                })
+
+                .listen('.user.status', function(e) {
+        var dot = document.getElementById('dot-' + e.user_id);
+
+        if (e.status === 'online') {
+            if (!dot) {
+                // User baru, belum ada di sidebar — tambahkan
+                var sidebar = document.querySelector('.sidebar');
+                var section = sidebar.querySelector('.section');
+                var a = document.createElement('a');
+                a.href = '/chat/private/' + e.user_id;
+                a.id = 'user-link-' + e.user_id;
+                a.innerHTML = '<div class="dot online" id="dot-' + e.user_id + '"></div>' + e.name;
+                sidebar.insertBefore(a, section);
+
+                // ✅ Tambahkan juga ke modal grup
+                var modalList = document.querySelector('#groupModal form');
+                if (modalList) {
+                    var label = document.createElement('label');
+                    label.innerHTML = '<input type="checkbox" name="user_ids[]" value="' + e.user_id + '"> ' + e.name;
+                    label.id = 'modal-user-' + e.user_id;
+                    var actions = modalList.querySelector('.actions');
+                    modalList.insertBefore(label, actions);
+                }
+            } else {
+                dot.classList.add('online');
+            }
+        } else {
+            if (dot) dot.classList.remove('online');
+        }
+    });
 
             // Real-time pesan
             if (conversationId) {

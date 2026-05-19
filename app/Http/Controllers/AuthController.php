@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Events\UserOnline;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -49,6 +50,9 @@ class AuthController extends Controller
 
     if (Auth::attempt(['email' => $request->email, 'password' => $request->password], true)) {
         $request->session()->regenerate();
+
+        broadcast(new UserOnline(Auth::user(), 'online'));
+
         return redirect()->route('chat.index');
     }
 
@@ -58,9 +62,10 @@ class AuthController extends Controller
     // Logout
     public function logout(Request $request)
     {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect('/login');
+        broadcast(new UserOnline(Auth::user(), 'offline'));
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
     }
 }
